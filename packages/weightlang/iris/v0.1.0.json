@@ -6,6 +6,6 @@
   "source_commit": "21d85e641edfb0a431aa1027cfee1bb0f967645a",
   "index_sha256": "d508eda46b6c66ba5c991cf259680b53a959b7d64706f23714bf1c0f3aa9b0ac",
   "license": "MIT",
-  "edition": "0.1",
+  "edition": "0.2",
   "yanked": false
 }
