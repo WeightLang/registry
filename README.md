@@ -24,7 +24,7 @@ fn main() {
 }
 ```
 
-执行 `wgt run main.wgt`，或 `weightc build main.wgt -o model` 编译后运行。
+执行 `wgt run main.wgt`，或 `weightc compile main.wgt -o model` 编译后运行。
 旧版本记录和 Release 保持不可变；当前解析器不接受旧语法。
 
 ## 提交包
