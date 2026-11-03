@@ -43,7 +43,7 @@ def validate(path, record):
     assert re.fullmatch(r'[0-9a-f]{64}', record['index_sha256'])
     assert isinstance(record['license'], str) and 0 < len(record['license']) <= 200
     assert not any(ord(c) < 32 or ord(c) == 127 for c in record['license'])
-    assert record['edition'] in ('0.1', '0.2', '0.3') and type(record['yanked']) is bool
+    assert record['edition'] in ('0.1', '0.2', '0.3', '0.5') and type(record['yanked']) is bool
 
 def verify(record):
     parts = record['module'].split('/')
@@ -61,7 +61,14 @@ def verify(record):
     assert index['artifacts'], 'empty package'
     for name, artifact in index['artifacts'].items():
         assert re.fullmatch(r'[A-Za-z_][A-Za-z0-9_]*', name)
-        for filename in ('manifest.json', 'source.wgt', 'weights.safetensors'):
+        if artifact.get('format') == 'weightlang.native-build.v1':
+            filenames = ('manifest.json', 'source.wgt', 'model.json', 'checkpoint.json')
+            assert record['edition'] == '0.5', 'native package requires edition 0.5'
+        else:
+            assert artifact.get('format') in (None, 'weightlang.artifact'), 'unknown artifact format'
+            filenames = ('manifest.json', 'source.wgt', 'weights.safetensors')
+        assert set(artifact['files']) == set(filenames), 'unexpected artifact files'
+        for filename in filenames:
             meta = artifact['files'][filename]
             assert re.fullmatch(r'[A-Za-z0-9_.-]+', meta['asset']) and meta['asset'] not in ('.', '..')
             assert type(meta['size']) is int and 0 <= meta['size'] <= 2 * 1024**3

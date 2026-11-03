@@ -1,0 +1,11 @@
+{
+  "format_version": 1,
+  "name": "weightlang/iris",
+  "module": "github.com/WeightLang/WeightLang/packages/iris",
+  "version": "v0.5.0",
+  "source_commit": "d0cfc1b727fda1731031ac1f6e339239acef0e06",
+  "index_sha256": "d1de1690b84050be5cb3f001e2a65d00241a3e77a12f9de06a1b642534d06e58",
+  "license": "MIT AND CC-BY-4.0",
+  "edition": "0.5",
+  "yanked": false
+}

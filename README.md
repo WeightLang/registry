@@ -1,35 +1,41 @@
 # WeightLang package registry
 
 这是 WeightLang 的 Git 包索引。索引只保存元数据；模型权重保存在各发布者的 GitHub Release 中。
-需要包含注册表功能的源码版 `wgt`；旧版 Python wheel 不包含此客户端。
+需要包含注册表功能的源码版 `wgt`；当前客户端和源码统一使用 WGT 0.5，旧版 Python wheel 不支持该格式。
 
 ## 使用包
 
 ```sh
 wgt add weightlang/gates
-wgt add weightlang/gates --version v0.2.0
+wgt add weightlang/gates --version v0.5.0
 wgt update weightlang/gates
 ```
 
-`add` 选择索引中最高的未撤回版本，随后固定精确版本、注册表 Git 提交、源码提交和制品哈希。
+`add` 选择索引中最高的未撤回且兼容 edition 0.5 的版本，随后固定精确版本、注册表 Git 提交、源码提交和制品哈希。
 `wgt.toml` 保存完整来源路径，`wgt.sum` 保存完整锁定信息；请一起提交 Git。
 源码仍使用完整制品路径，例如：
 
 ```wgt
-import hidden from "github.com/WeightLang/WeightLang/packages/gates/xor_mlp" layer=hidden freeze
+wgt 0.5
+fn main() {
+    let root = dependency("github.com/WeightLang/WeightLang/packages/gates");
+    let xor = model(root + "/xor_mlp/model.json", "sgd");
+    return predict(xor, [0, 1]);
+}
 ```
 
-内置计算库使用 `import std/nn`（wgt 0.3），无需安装或注册。
+执行 `wgt run main.wgt`，或 `weightc build main.wgt -o model` 编译后运行。
+旧版本记录和 Release 保持不可变；当前解析器不接受旧语法。
 
 ## 提交包
 
 先确保 `gh auth login` 已登录，且账号拥有源仓库写权限。源码和对应 tag 必须推送到 GitHub。
 
 ```sh
-wgt build -o weights
-wgt package --version v0.1.0 --artifacts weights
+weightc legacy-build model.wgt -o weights/model
+wgt release-assets --version v0.5.0 --artifacts weights -o dist
 # 按打包结果推送对应源码 commit 和 package tag 后：
-wgt publish --index dist/wgt.index.json --name your-owner/model --license MIT --edition 0.3
+wgt publish --index dist/wgt.index.json --name your-owner/model --license MIT --edition 0.5
 ```
 
 命令上传稳定 Release assets（不占用工具链 Latest），验证远端文件，然后创建索引 PR。
@@ -41,7 +47,7 @@ wgt publish --index dist/wgt.index.json --name your-owner/model --license MIT --
 
 ```sh
 wgt register github.com/your-owner/repo/packages/model \
-  --name your-owner/model --version v0.1.0 --license MIT --edition 0.3
+  --name your-owner/model --version v0.5.0 --license MIT --edition 0.5
 ```
 
 `register --dry-run` 会联网校验制品并打印候选记录，但不创建 PR。
@@ -62,4 +68,6 @@ python scripts/validate.py --base <base-commit> --verify-assets
 删除 Release 会影响重新下载；目前没有镜像、签名、传递依赖或短名源码 import。
 
 客户端校验源码 tag、release index、每个制品文件的大小与 SHA256，以及完整制品布局。
+原生包格式 `weightlang.native-build.v1` 包含 manifest.json、source.wgt、model.json 和
+checkpoint.json；推理模型与优化器断点分别存放，下载和校验不执行训练。
 索引审核工作流使用只读令牌；下载仅做哈希和声明式检查，不执行包代码。
