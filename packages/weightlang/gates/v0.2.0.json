@@ -1,0 +1,11 @@
+{
+  "format_version": 1,
+  "name": "weightlang/gates",
+  "module": "github.com/WeightLang/WeightLang/packages/gates",
+  "version": "v0.2.0",
+  "source_commit": "21d85e641edfb0a431aa1027cfee1bb0f967645a",
+  "index_sha256": "3eaea6d89fafa360628dde3b237b18701b63a29060288748a66636a09e135908",
+  "license": "MIT",
+  "edition": "0.1",
+  "yanked": false
+}
