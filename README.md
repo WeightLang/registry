@@ -26,7 +26,8 @@ import hidden from "github.com/WeightLang/WeightLang/packages/gates/xor_mlp" lay
 先确保 `gh auth login` 已登录，且账号拥有源仓库写权限。源码和对应 tag 必须推送到 GitHub。
 
 ```sh
-wgt package --version v0.1.0
+wgt build -o weights
+wgt package --version v0.1.0 --artifacts weights
 # 按打包结果推送对应源码 commit 和 package tag 后：
 wgt publish --index dist/wgt.index.json --name your-owner/model --license MIT --edition 0.3
 ```
